@@ -11,7 +11,7 @@ IPAddress subnet(255,255,255,0);
 ESP8266WebServer server(80);
 
 const int dry = 500;
-bool isAutomated = false;
+bool isautomatic = false;
 bool isWatering = false;
 int sensorValue;
 int relayInput = D2;
@@ -20,7 +20,7 @@ void handleRoot() {
   int sensorValue = analogRead(A0);
   bool isDry = false;
   //check
-  if(sensorValue > dry){
+  if(sensorValue >= dry){
     isDry = true;  
   }
   
@@ -29,7 +29,7 @@ void handleRoot() {
 
   JsonObject &root = jsonBuffer.createObject();
   root["success"] = true;
-  root["automated_watering"] = isAutomated;
+  root["automatic_watering"] = isautomatic;
   root["humidity"] = sensorValue;
   root["dry"] = isDry;
 
@@ -40,14 +40,14 @@ void handleRoot() {
 }
 
 void handleOn() {
-  isAutomated = true;
+  isautomatic = true;
 
   //parse json
   StaticJsonBuffer<500> jsonBuffer;
 
   JsonObject &root = jsonBuffer.createObject();
   root["success"] = true;
-  root["automated_watering"] = isAutomated;
+  root["automatic_watering"] = isautomatic;
   
 
   String jsonMsg;
@@ -58,14 +58,14 @@ void handleOn() {
 }
 
 void handleOff() {
-  isAutomated = false;
+  isautomatic = false;
   
   //parse json
   StaticJsonBuffer<500> jsonBuffer;
 
   JsonObject &root = jsonBuffer.createObject();
   root["success"] = true;
-  root["automated_watering"] = isAutomated;
+  root["automatic_watering"] = isautomatic;
   
 
   String jsonMsg;
@@ -110,7 +110,7 @@ void handleNotFound() {
 
   JsonObject &root = jsonBuffer.createObject();
   root["success"] = false;
-  root["automated_watering"] = isAutomated;
+  root["automatic_watering"] = isautomatic;
   root["message"] = message;
   
 
@@ -143,7 +143,7 @@ void setup(void) {
   Serial.println(WiFi.softAPConfig(local_IP, gateway, subnet) ? "Ready" : "Failed!");
 
   Serial.print("Setting soft-AP ... ");
-  Serial.println(WiFi.softAP("Primakara Automatic Watering", "kopinikmattidakbikinkembung") ? "Ready" : "Failed!");
+  Serial.println(WiFi.softAP("Primakara Automatic Watering", "test1234") ? "Ready" : "Failed!");
   
   Serial.println("");
   Serial.print("IP address: ");
@@ -168,7 +168,7 @@ void setup(void) {
 void loop(void) {
   server.handleClient();
 
-  if (isAutomated) {
+  if (isautomatic) {
     watering();
   } else {
     sensorValue = analogRead(A0);
